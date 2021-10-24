@@ -7,19 +7,86 @@ namespace Decorator
     {
         static void Main(string[] args)
         {
-            var messages = new List<IMessage>
-            {
-                new NormalDecorator(new SimpleMessage("First Message!")),
-                new NormalDecorator(new AlertMessage("Second Message with a beep!")),
-                new ErrorDecorator(new AlertMessage("Third Message with a beep and in red!")),
+            Pizza pizza1 = new ItalianPizza(); // итальянская пицца
+            Console.WriteLine("Название: {0}", pizza1.Name);
+            Console.WriteLine("Цена: {0}", pizza1.GetCost());
 
-                new SimpleMessage("Not Decorated...")
-            };
-            foreach (var message in messages)
-            {
-                message.PrintMessage();
-            }
-            Console.Read();
+            Pizza pizza2 = new ItalianPizza();
+            pizza2 = new TomatoPizza(pizza2); // итальянская пицца с томатами
+            Console.WriteLine("Название: {0}", pizza2.Name);
+            Console.WriteLine("Цена: {0}", pizza2.GetCost());
+
+            Pizza pizza3 = new ItalianPizza();
+            pizza3 = new CheesePizza(pizza3);// итальянская пиццы с сыром
+            Console.WriteLine("Название: {0}", pizza3.Name);
+            Console.WriteLine("Цена: {0}", pizza3.GetCost());
+
+            Pizza pizza4 = new BulgerianPizza();
+            pizza4 = new TomatoPizza(pizza4);
+            pizza4 = new CheesePizza(pizza4);// болгарская пиццы с томатами и сыром
+            Console.WriteLine("Название: {0}", pizza4.Name);
+            Console.WriteLine("Цена: {0}", pizza4.GetCost());
+
+            Console.ReadLine();
         }
     }
+
+    abstract class Pizza
+    {
+        public Pizza(string n)
+        {
+            this.Name = n;
+        }
+        public string Name { get; protected set; }
+        public abstract int GetCost();
+    }
+
+    class ItalianPizza : Pizza
+    {
+        public ItalianPizza() : base("Итальянская пицца") { }
+
+        public override int GetCost()
+        {
+            return 10;
+        }
+    }
+    class BulgerianPizza : Pizza
+    {
+        public BulgerianPizza() : base("Болгарская пицца") { }
+
+        public override int GetCost()
+        {
+            return 8;
+        }
+    }
+
+    abstract class PizzaDecorator : Pizza
+    {
+        protected Pizza pizza;
+        public PizzaDecorator(string n, Pizza pizza) : base(n)
+        {
+            this.pizza = pizza;
+        }
+    }
+
+    class TomatoPizza : PizzaDecorator
+    {
+        public TomatoPizza(Pizza p) : base(p.Name + ", с томатами", p) { }
+
+        public override int GetCost()
+        {
+            return pizza.GetCost() + 3;
+        }
+    }
+
+    class CheesePizza : PizzaDecorator
+    {
+        public CheesePizza(Pizza p) : base(p.Name + ", с сыром", p) { }
+
+        public override int GetCost()
+        {
+            return pizza.GetCost() + 5;
+        }
+    }
+
 }
