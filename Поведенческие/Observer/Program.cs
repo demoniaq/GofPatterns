@@ -17,8 +17,8 @@ namespace Observer
             subject.OnQuantityUpdated += redObserver.ObserverQuantity;
             subject.OnQuantityUpdated += yellowObserver.ObserverQuantity;
 
-            subject.UpdateQuantity(12);
-            subject.UpdateQuantity(5);
+            subject.UpdateQuantityAndNotify(12);
+            subject.UpdateQuantityAndNotify(5);
         }
     }
 
@@ -30,7 +30,7 @@ namespace Observer
         public event Action<int> OnQuantityUpdated;
 
         private int _quantity = 0;
-        public void UpdateQuantity(int value)
+        public void UpdateQuantityAndNotify(int value)
         {
             _quantity += value;
             // оповещение наблюдателей
