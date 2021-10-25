@@ -7,123 +7,51 @@ namespace Observer
     {
         static void Main(string[] args)
         {
+            var subject = new Subject();
 
-            Stock stock = new Stock();
-            Bank bank = new Bank("ЮнитБанк", stock);
-            Broker broker = new Broker("Иван Иваныч", stock);
-            // имитация торгов
-            stock.Market();
-            // брокер прекращает наблюдать за торгами
-            broker.StopTrade();
-            // имитация торгов
-            stock.Market();
+            var greenObserver = new Observer(ConsoleColor.Green);
+            var redObserver = new Observer(ConsoleColor.Red);
+            var yellowObserver = new Observer(ConsoleColor.Yellow);
 
-            Console.Read();
+            subject.OnQuantityUpdated += greenObserver.ObserverQuantity;
+            subject.OnQuantityUpdated += redObserver.ObserverQuantity;
+            subject.OnQuantityUpdated += yellowObserver.ObserverQuantity;
 
+            subject.UpdateQuantity(12);
+            subject.UpdateQuantity(5);
         }
     }
 
-    interface IObserver
+
+
+    // Издатель
+    class Subject
     {
-        void Update(Object ob);
-    }
+        public event Action<int> OnQuantityUpdated;
 
-    interface IObservable
-    {
-        void RegisterObserver(IObserver o);
-        void RemoveObserver(IObserver o);
-        void NotifyObservers();
-    }
-
-    class Stock : IObservable
-    {
-        StockInfo sInfo; // информация о торгах
-
-        List<IObserver> observers;
-        public Stock()
+        private int _quantity = 0;
+        public void UpdateQuantity(int value)
         {
-            observers = new List<IObserver>();
-            sInfo = new StockInfo();
-        }
-
-        public void RegisterObserver(IObserver o)
-        {
-            observers.Add(o);
-        }
-
-        public void RemoveObserver(IObserver o)
-        {
-            observers.Remove(o);
-        }
-
-        public void NotifyObservers()
-        {
-            foreach (IObserver o in observers)
-            {
-                o.Update(sInfo);
-            }
-        }
-
-        public void Market()
-        {
-            Random rnd = new Random();
-            sInfo.USD = rnd.Next(20, 40);
-            sInfo.Euro = rnd.Next(30, 50);
-            NotifyObservers();
+            _quantity += value;
+            // оповещение наблюдателей
+            OnQuantityUpdated?.Invoke(_quantity);
         }
     }
 
-    class StockInfo
+    // Подписчик
+    class Observer
     {
-        public int USD { get; set; }
-        public int Euro { get; set; }
-    }
-
-
-    class Broker : IObserver
-    {
-        public string Name { get; set; }
-        IObservable stock;
-        public Broker(string name, IObservable obs)
+        ConsoleColor _color;
+        public Observer(ConsoleColor color)
         {
-            this.Name = name;
-            stock = obs;
-            stock.RegisterObserver(this);
+            _color = color;
         }
-        public void Update(object ob)
-        {
-            StockInfo sInfo = (StockInfo)ob;
 
-            if (sInfo.USD > 30)
-                Console.WriteLine("Брокер {0} продает доллары;  Курс доллара: {1}", this.Name, sInfo.USD);
-            else
-                Console.WriteLine("Брокер {0} покупает доллары;  Курс доллара: {1}", this.Name, sInfo.USD);
-        }
-        public void StopTrade()
+        internal void ObserverQuantity(int quantity)
         {
-            stock.RemoveObserver(this);
-            stock = null;
-        }
-    }
-
-    class Bank : IObserver
-    {
-        public string Name { get; set; }
-        IObservable stock;
-        public Bank(string name, IObservable obs)
-        {
-            this.Name = name;
-            stock = obs;
-            stock.RegisterObserver(this);
-        }
-        public void Update(object ob)
-        {
-            StockInfo sInfo = (StockInfo)ob;
-
-            if (sInfo.Euro > 40)
-                Console.WriteLine("Банк {0} продает евро;  Курс евро: {1}", this.Name, sInfo.Euro);
-            else
-                Console.WriteLine("Банк {0} покупает евро;  Курс евро: {1}", this.Name, sInfo.Euro);
+            Console.ForegroundColor = _color;
+            Console.WriteLine($"I observer the new quantity value of {quantity}.");
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 
