@@ -33,11 +33,13 @@ namespace Decorator
 
     abstract class Pizza
     {
-        public Pizza(string n)
-        {
-            this.Name = n;
-        }
         public string Name { get; protected set; }
+
+        public Pizza(string name)
+        {
+            this.Name = name;
+        }
+
         public abstract int GetCost();
     }
 
@@ -63,7 +65,7 @@ namespace Decorator
     abstract class PizzaDecorator : Pizza
     {
         protected Pizza pizza;
-        public PizzaDecorator(string n, Pizza pizza) : base(n)
+        public PizzaDecorator(string name, Pizza pizza) : base(name)
         {
             this.pizza = pizza;
         }
@@ -71,7 +73,7 @@ namespace Decorator
 
     class TomatoPizza : PizzaDecorator
     {
-        public TomatoPizza(Pizza p) : base(p.Name + ", с томатами", p) { }
+        public TomatoPizza(Pizza pizza) : base(pizza.Name + ", с томатами", pizza) { }
 
         public override int GetCost()
         {
@@ -81,7 +83,7 @@ namespace Decorator
 
     class CheesePizza : PizzaDecorator
     {
-        public CheesePizza(Pizza p) : base(p.Name + ", с сыром", p) { }
+        public CheesePizza(Pizza pizza) : base(pizza.Name + ", с сыром", pizza) { }
 
         public override int GetCost()
         {
