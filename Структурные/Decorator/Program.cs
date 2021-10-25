@@ -28,6 +28,7 @@ namespace Decorator
             Console.WriteLine("Цена: {0}", pizza4.GetCost());
 
             Console.ReadLine();
+
         }
     }
 
