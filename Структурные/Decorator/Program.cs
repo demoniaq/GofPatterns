@@ -1,95 +1,85 @@
 ﻿using System;
 using System.Collections.Generic;
 
+// Создать объект кофе, все виды кофе может со сливками, с шоколадом, корицей - разная цена
+
 namespace Decorator
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Pizza pizza1 = new ItalianPizza(); // итальянская пицца
-            Console.WriteLine("Название: {0}", pizza1.Name);
-            Console.WriteLine("Цена: {0}", pizza1.GetCost());
+            var americano = new Americano();
+            Console.WriteLine(americano.GetCoffeeWithPrice());
 
-            Pizza pizza2 = new ItalianPizza();
-            pizza2 = new TomatoPizza(pizza2); // итальянская пицца с томатами
-            Console.WriteLine("Название: {0}", pizza2.Name);
-            Console.WriteLine("Цена: {0}", pizza2.GetCost());
+            var espresso = new Espresso();
+            Console.WriteLine(espresso.GetCoffeeWithPrice());
 
-            Pizza pizza3 = new ItalianPizza();
-            pizza3 = new CheesePizza(pizza3);// итальянская пиццы с сыром
-            Console.WriteLine("Название: {0}", pizza3.Name);
-            Console.WriteLine("Цена: {0}", pizza3.GetCost());
+            var americanoWithMilk = new CoffeeWithMilk(americano);
+            Console.WriteLine(americanoWithMilk.GetCoffeeWithPrice());
 
-            Pizza pizza4 = new BulgerianPizza();
-            pizza4 = new TomatoPizza(pizza4);
-            pizza4 = new CheesePizza(pizza4);// болгарская пиццы с томатами и сыром
-            Console.WriteLine("Название: {0}", pizza4.Name);
-            Console.WriteLine("Цена: {0}", pizza4.GetCost());
+            var americanoWithMilkWithSugar = new CoffeeWithSugar(americanoWithMilk);
+            Console.WriteLine(americanoWithMilkWithSugar.GetCoffeeWithPrice());
+
+            var espressoWithSugar = new CoffeeWithSugar(espresso);
+            Console.WriteLine(espressoWithSugar.GetCoffeeWithPrice());
+
+            var espressoWithMilk = new CoffeeWithMilk(espresso);
+            Console.WriteLine(espressoWithMilk.GetCoffeeWithPrice());
+
 
             Console.ReadLine();
         }
     }
 
-    abstract class Pizza
+    abstract internal class Coffee
     {
-        public string Name { get; protected set; }
-
-        public Pizza(string name)
+        public Coffee(string name, decimal price)
         {
-            this.Name = name;
+            Name = name;
+            Price = price;
         }
 
-        public abstract int GetCost();
-    }
+        public string Name { get; set; }
 
-    class ItalianPizza : Pizza
-    {
-        public ItalianPizza() : base("Итальянская пицца") { }
+        public decimal Price { get; set; }
 
-        public override int GetCost()
+        public virtual string GetCoffeeWithPrice()
         {
-            return 10;
-        }
-    }
-    class BulgerianPizza : Pizza
-    {
-        public BulgerianPizza() : base("Болгарская пицца") { }
-
-        public override int GetCost()
-        {
-            return 8;
+            return $"Кофе {Name}, цена {Price}";
         }
     }
 
-    abstract class PizzaDecorator : Pizza
+    internal class Americano : Coffee
     {
-        protected Pizza pizza;
+        public Americano() : base("Американо", 10) { }
+    }
 
-        public PizzaDecorator(string name, Pizza pizza) : base(name)
+    internal class Espresso : Coffee
+    {
+        public Espresso() : base("Эспрессо", 20) { }
+    }
+
+    internal abstract class DecoratedCoffee : Coffee
+    {
+        protected Coffee coffee;
+
+        public DecoratedCoffee(Coffee coffee, string name, decimal price) : base(name, price)
         {
-            this.pizza = pizza;
+            this.coffee = coffee;
         }
     }
 
-    class TomatoPizza : PizzaDecorator
-    {
-        public TomatoPizza(Pizza pizza) : base(pizza.Name + ", с томатами", pizza) { }
 
-        public override int GetCost()
-        {
-            return pizza.GetCost() + 3;
-        }
+    internal class CoffeeWithMilk : DecoratedCoffee
+    {
+        public CoffeeWithMilk(Coffee coffee) : base(coffee, coffee.Name + " со сливками", coffee.Price + 3) { }
     }
 
-    class CheesePizza : PizzaDecorator
+    internal class CoffeeWithSugar : DecoratedCoffee
     {
-        public CheesePizza(Pizza pizza) : base(pizza.Name + ", с сыром", pizza) { }
-
-        public override int GetCost()
-        {
-            return pizza.GetCost() + 5;
-        }
+        public CoffeeWithSugar(Coffee coffee) : base(coffee, coffee.Name + " с сахаром", coffee.Price + 1) { }
     }
+
 
 }
