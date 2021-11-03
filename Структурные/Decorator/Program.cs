@@ -106,18 +106,18 @@ namespace Decorator
     #region Классы для IList
     public class OddIntList : IList<int>
     {
-        public IList<int> List { get; set; }
+        private IList<int> list;
 
         public OddIntList(IList<int> list)
         {
-            List = list;
+            this.list = list;
         }
 
-        public int this[int index] { get => List[index]; set => List[index] = value; }
+        public int this[int index] { get => list[index]; set => list[index] = value; }
 
-        public int Count => List.Count;
+        public int Count => list.Count;
 
-        public bool IsReadOnly => List.IsReadOnly;
+        public bool IsReadOnly => list.IsReadOnly;
 
         public void Add(int item)
         {
@@ -127,27 +127,27 @@ namespace Decorator
             }
             else
             {
-                List.Add(item);
+                list.Add(item);
             }
         }
 
-        public void Clear() => List.Clear();
+        public void Clear() => list.Clear();
 
-        public bool Contains(int item) => List.Contains(item);
+        public bool Contains(int item) => list.Contains(item);
 
-        public void CopyTo(int[] array, int arrayIndex) => List.CopyTo(array, arrayIndex);
+        public void CopyTo(int[] array, int arrayIndex) => list.CopyTo(array, arrayIndex);
 
-        public int IndexOf(int item) => List.IndexOf(item);
+        public int IndexOf(int item) => list.IndexOf(item);
 
-        public void Insert(int index, int item) => List.Insert(index, item);
+        public void Insert(int index, int item) => list.Insert(index, item);
 
-        public bool Remove(int item) => List.Remove(item);
+        public bool Remove(int item) => list.Remove(item);
 
-        public void RemoveAt(int index) => List.RemoveAt(index);
+        public void RemoveAt(int index) => list.RemoveAt(index);
 
-        IEnumerator IEnumerable.GetEnumerator() => List.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => list.GetEnumerator();
 
-        public IEnumerator<int> GetEnumerator() => List.GetEnumerator();
+        public IEnumerator<int> GetEnumerator() => list.GetEnumerator();
     }
     #endregion Классы для IList
 
